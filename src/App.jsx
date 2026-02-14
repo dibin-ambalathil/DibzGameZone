@@ -10,7 +10,7 @@ export default function App() {
       <main>
         <Game />
       </main>
-      <footer className="credit">Built with Vite + React</footer>
+      {/* <footer className="credit">dbz</footer> */}
     </div>
   )
 }
