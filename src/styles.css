@@ -1,0 +1,23 @@
+:root{
+  --bg:#0f1720;
+  --panel:#0b1220;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box;font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif}
+body{margin:0;background:var(--bg);color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh}
+.app{width:480px}
+header{display:flex;justify-content:center;margin-bottom:12px}
+h1{margin:0;font-size:28px}
+.game{background:var(--panel);padding:12px;border-radius:8px;position:relative}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.controls{display:flex;gap:8px;align-items:center}
+canvas{display:block;border-radius:6px}
+.overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);padding:16px;border-radius:8px}
+.hint{margin-top:8px;color:var(--muted);font-size:13px}
+.credit{margin-top:8px;text-align:center;color:var(--muted);font-size:12px}
+
+.mobile-controls{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.mc{background:rgba(255,255,255,0.06);border:none;color:#e6eef8;width:44px;height:44px;border-radius:8px;font-size:18px;display:flex;align-items:center;justify-content:center;touch-action:none}
+.mc-row{display:flex;gap:6px}
+.mc:active{transform:scale(0.96)}
+
