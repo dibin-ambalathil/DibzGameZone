@@ -53,6 +53,11 @@ canvas{display:block;border-radius:6px;width:100%;height:auto}
 }
 .mc:active{transform:scale(0.96)}
 
+/* rotate the same triangle glyph to create left/right arrows so all arrows share the same style */
+.arrow-rot{display:inline-block;transform-origin:center}
+.arrow-left{transform:rotate(-90deg)}
+.arrow-right{transform:rotate(90deg)}
+
 /* Responsive tweaks for small screens */
 @media (max-width: 480px) {
   .hud{flex-direction:column;align-items:flex-start;gap:8px}

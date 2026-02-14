@@ -257,8 +257,12 @@ export default function Game() {
       <div className="mobile-controls">
         <button className="mc mc-up" onPointerDown={() => setDirectionSafe({ x: 0, y: -1 })}>▲</button>
         <div className="mc-row">
-          <button className="mc mc-left" onPointerDown={() => setDirectionSafe({ x: -1, y: 0 })}>◀</button>
-          <button className="mc mc-right" onPointerDown={() => setDirectionSafe({ x: 1, y: 0 })}>▶</button>
+          <button className="mc mc-left" onPointerDown={() => setDirectionSafe({ x: -1, y: 0 })}>
+            <span className="arrow-rot arrow-left">▲</span>
+          </button>
+          <button className="mc mc-right" onPointerDown={() => setDirectionSafe({ x: 1, y: 0 })}>
+            <span className="arrow-rot arrow-right">▲</span>
+          </button>
         </div>
         <button className="mc mc-down" onPointerDown={() => setDirectionSafe({ x: 0, y: 1 })}>▼</button>
       </div>

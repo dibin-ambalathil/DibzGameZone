@@ -5,3 +5,6 @@
 
 - 2026-02-14: Disable resume after collision
   - `src/Game.jsx`: Added `gameOver` state, set it when the snake collides, and disabled the Pause/Resume button so the player cannot resume after game over (must Restart).
+
+- 2026-02-14: Make left/right arrows match up/down style
+  - `src/Game.jsx` / `src/styles.css`: Use the same triangle glyph for all arrow buttons and rotate the glyph for left/right so visuals are consistent.
