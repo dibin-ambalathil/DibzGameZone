@@ -21,6 +21,8 @@ function randomPosition(exclude = []) {
 export default function Game() {
   // References and state used by the game
   const canvasRef = useRef(null) // canvas DOM reference for drawing
+  const cellSizeRef = useRef(20) // pixel size per grid cell (calculated on resize)
+
   // `snake` is an array of segments; first element is the head
   const [snake, setSnake] = useState([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }])
   // `dirRef` holds the current movement direction (mutable ref so effects don't need to re-subscribe)
@@ -36,6 +38,29 @@ export default function Game() {
   const [highScore, setHighScore] = useState(() => Number(localStorage.getItem('snake_highscore') || 0))
   // touch start point for swipe detection on mobile
   const touchStartRef = useRef(null)
+
+  // Helper: draw everything to canvas using the current `cellSizeRef` value.
+  function draw() {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const cssSize = canvas.clientWidth // size in CSS pixels (canvas is kept square)
+    const cell = cellSizeRef.current
+
+    // clear background using CSS pixel dimensions
+    ctx.fillStyle = '#0b0b0b'
+    ctx.fillRect(0, 0, cssSize, cssSize)
+
+    // draw food
+    ctx.fillStyle = '#e63946'
+    ctx.fillRect(food.x * cell, food.y * cell, cell, cell)
+
+    // draw snake
+    snake.forEach((s, i) => {
+      ctx.fillStyle = i === 0 ? '#264653' : '#2a9d8f'
+      ctx.fillRect(s.x * cell, s.y * cell, cell - 1, cell - 1)
+    })
+  }
 
   /**
    * Keyboard input handler - maps arrow keys and WASD to direction vectors.
@@ -114,24 +139,41 @@ export default function Game() {
    * Rendering effect - draws the background, food, and snake to the canvas whenever
    * the `snake` or `food` state changes.
    */
+  // On changes to snake or food, redraw using the helper.
+  useEffect(() => {
+    draw()
+  }, [snake, food])
+
+  // Responsive canvas: set canvas pixel size to match the container and the device pixel ratio.
   useEffect(() => {
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    // clear background
-    ctx.fillStyle = '#0b0b0b'
-    ctx.fillRect(0, 0, WIDTH, HEIGHT)
+    if (!canvas) return
 
-    // draw food (red)
-    ctx.fillStyle = '#e63946'
-    ctx.fillRect(food.x * CELL, food.y * CELL, CELL, CELL)
+    function resizeCanvas() {
+      const parentWidth = canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth
+      // keep canvas roughly square and limit height to a portion of screen on small devices
+      const cssSize = Math.min(parentWidth, Math.max(200, window.innerHeight * 0.6))
+      const dpr = window.devicePixelRatio || 1
+      // set CSS size (how big it appears on screen)
+      canvas.style.width = cssSize + 'px'
+      canvas.style.height = cssSize + 'px'
+      // set actual pixel buffer size for crisp rendering on high-DPI displays
+      canvas.width = Math.floor(cssSize * dpr)
+      canvas.height = Math.floor(cssSize * dpr)
+      // scale drawing operations so we can work in CSS pixels
+      const ctx = canvas.getContext('2d')
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // update cell size in CSS pixels
+      cellSizeRef.current = cssSize / COLS
+      // redraw after resize
+      draw()
+    }
 
-    // draw snake (head darker)
-    ctx.fillStyle = '#2a9d8f'
-    snake.forEach((s, i) => {
-      ctx.fillStyle = i === 0 ? '#264653' : '#2a9d8f'
-      ctx.fillRect(s.x * CELL, s.y * CELL, CELL - 1, CELL - 1)
-    })
-  }, [snake, food])
+    // initial size and listener
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
+    return () => window.removeEventListener('resize', resizeCanvas)
+  }, [])
 
   /**
    * Reset the game to the initial state. Keeps the stored high score intact.
