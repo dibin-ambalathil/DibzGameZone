@@ -39,6 +39,13 @@ export default function Game() {
   // touch start point for swipe detection on mobile
   const touchStartRef = useRef(null)
 
+  // Helper to change direction safely: ignores direct reverse moves
+  function setDirectionSafe(nd) {
+    // prevent reversing into itself
+    if (nd.x === -dirRef.current.x && nd.y === -dirRef.current.y) return
+    dirRef.current = nd
+  }
+
   // Helper: draw everything to canvas using the current `cellSizeRef` value.
   function draw() {
     const canvas = canvasRef.current
@@ -213,17 +220,17 @@ export default function Game() {
           touchStartRef.current = { x: e.clientX, y: e.clientY }
         }}
         onPointerUp={e => {
-          // compute swipe vector and set direction accordingly
+          // compute swipe vector and set direction accordingly (safely)
           const s = touchStartRef.current
           if (!s) return
           const dx = e.clientX - s.x
           const dy = e.clientY - s.y
           if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) dirRef.current = { x: 1, y: 0 }
-            else dirRef.current = { x: -1, y: 0 }
+            if (dx > 0) setDirectionSafe({ x: 1, y: 0 })
+            else setDirectionSafe({ x: -1, y: 0 })
           } else {
-            if (dy > 0) dirRef.current = { x: 0, y: 1 }
-            else dirRef.current = { x: 0, y: -1 }
+            if (dy > 0) setDirectionSafe({ x: 0, y: 1 })
+            else setDirectionSafe({ x: 0, y: -1 })
           }
           touchStartRef.current = null
         }}
@@ -233,12 +240,12 @@ export default function Game() {
 
       {/* Simple on-screen buttons for mobile controls (calls are pointer-based) */}
       <div className="mobile-controls">
-        <button className="mc mc-up" onPointerDown={() => (dirRef.current = { x: 0, y: -1 })}>▲</button>
+        <button className="mc mc-up" onPointerDown={() => setDirectionSafe({ x: 0, y: -1 })}>▲</button>
         <div className="mc-row">
-          <button className="mc mc-left" onPointerDown={() => (dirRef.current = { x: -1, y: 0 })}>◀</button>
-          <button className="mc mc-right" onPointerDown={() => (dirRef.current = { x: 1, y: 0 })}>▶</button>
+          <button className="mc mc-left" onPointerDown={() => setDirectionSafe({ x: -1, y: 0 })}>◀</button>
+          <button className="mc mc-right" onPointerDown={() => setDirectionSafe({ x: 1, y: 0 })}>▶</button>
         </div>
-        <button className="mc mc-down" onPointerDown={() => (dirRef.current = { x: 0, y: 1 })}>▼</button>
+        <button className="mc mc-down" onPointerDown={() => setDirectionSafe({ x: 0, y: 1 })}>▼</button>
       </div>
     </div>
   )
