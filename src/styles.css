@@ -4,11 +4,12 @@
   --muted:#94a3b8;
 }
 *{box-sizing:border-box;font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif}
-body{margin:0;background:var(--bg);color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh}
-.app{width:100%;max-width:480px;padding:12px}
+/* place app near the top so there's less empty space above the game on mobile */
+body{margin:0;background:var(--bg);color:#e6eef8;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding-top:18px}
+.app{width:100%;max-width:480px;padding:8px}
 header{display:flex;justify-content:center;margin-bottom:12px}
 h1{margin:0;font-size:28px}
-.game{background:var(--panel);padding:12px;border-radius:8px;position:relative}
+.game{background:var(--panel);padding:12px 12px 72px;border-radius:8px;position:relative}
 .hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .controls{display:flex;gap:8px;align-items:center}
 canvas{display:block;border-radius:6px;width:100%;height:auto}
@@ -17,11 +18,12 @@ canvas{display:block;border-radius:6px;width:100%;height:auto}
 .credit{margin-top:8px;text-align:center;color:var(--muted);font-size:12px}
 
 .mobile-controls{
-  /* center the whole control cluster horizontally near the bottom */
+  /* center the whole control cluster horizontally near the bottom
+     moved slightly lower to avoid overlapping the canvas */
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 12px;
+  bottom: 22px;
   display: flex;
   flex-direction: column; /* up above, left/right in middle row, down below */
   gap: 10px; /* vertical spacing between rows */
@@ -56,7 +58,7 @@ canvas{display:block;border-radius:6px;width:100%;height:auto}
   .hud{flex-direction:column;align-items:flex-start;gap:8px}
   .controls{width:100%;justify-content:flex-start}
   /* keep controls centered and slightly larger touch targets on small screens */
-  .mobile-controls{bottom:10px}
+  .mobile-controls{bottom:18px}
   .mc{width:44px;height:44px;font-size:16px}
   .mc-row{width:132px;gap:12px}
 }
