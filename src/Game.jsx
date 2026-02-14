@@ -31,6 +31,8 @@ export default function Game() {
   const [food, setFood] = useState(() => randomPosition([]))
   // game running state (paused/playing)
   const [running, setRunning] = useState(true)
+  // whether the game ended due to collision
+  const [gameOver, setGameOver] = useState(false)
   // speed in ticks per second (higher = faster)
   const [speed, setSpeed] = useState(8)
   // current score and persisted high score
@@ -109,8 +111,9 @@ export default function Game() {
         // wrap-around movement using modulo
         const newHead = { x: (head.x + nd.x + COLS) % COLS, y: (head.y + nd.y + ROWS) % ROWS }
 
-        // collision with self -> stop the game
+        // collision with self -> mark game over and stop the game
         if (prev.some(p => p.x === newHead.x && p.y === newHead.y)) {
+          setGameOver(true)
           setRunning(false)
           return prev
         }
@@ -191,6 +194,8 @@ export default function Game() {
     setFood(randomPosition([]))
     setScore(0)
     setHighScore(() => Number(localStorage.getItem('snake_highscore') || 0))
+    // clear game over flag and start running
+    setGameOver(false)
     setRunning(true)
   }
 
@@ -205,7 +210,17 @@ export default function Game() {
         <div className="controls">
           <label>Speed</label>
           <input type="range" min="4" max="16" value={speed} onChange={e => setSpeed(Number(e.target.value))} />
-          <button onClick={() => setRunning(r => !r)}>{running ? 'Pause' : 'Resume'}</button>
+          {/*
+            Pause/Resume button: disabled when `gameOver` is true (cannot resume after collision).
+            Clicking toggles running only if the game is not over.
+          */}
+          <button
+            onClick={() => { if (!gameOver) setRunning(r => !r) }}
+            disabled={gameOver}
+            title={gameOver ? 'Game over — press Restart to play again' : ''}
+          >
+            {running ? 'Pause' : 'Resume'}
+          </button>
           <button onClick={restart}>Restart</button>
         </div>
       </div>
